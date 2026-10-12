@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0f17" />
+  <title>Tanaw TV</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="7" width="26" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M13 12.5v7l6-3.5z" fill="currentColor"/><path d="M11 3l5 4 5-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Tanaw<b>TV</b></span>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="Search channels…  ( / )" autocomplete="off" />
+    </div>
+    <div class="topbar-actions">
+      <span id="proxyBadge" class="badge" title="Stream proxy status">Proxy: checking…</span>
+      <button id="addBtn" class="btn primary" aria-label="Add playlist">+<span class="btn-label"> Add playlist</span></button>
+      <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sources" aria-label="Playlists">
+      <div class="nav-section">
+        <h3>Library</h3>
+        <ul id="libraryList"></ul>
+      </div>
+      <div class="nav-section">
+        <h3>Philippines</h3>
+        <ul id="localList"></ul>
+      </div>
+      <div class="nav-section">
+        <h3>International</h3>
+        <ul id="intlList"></ul>
+      </div>
+      <div class="nav-section">
+        <h3>My playlists</h3>
+        <ul id="customList"></ul>
+        <p id="customEmpty" class="muted small">Add your own M3U link, file or Xtream Codes login.</p>
+      </div>
+    </nav>
+
+    <section class="channels" aria-label="Channels">
+      <div class="channels-head">
+        <div>
+          <h2 id="sourceTitle">Channels</h2>
+          <p id="channelCount" class="muted small"></p>
+        </div>
+        <select id="groupSelect" aria-label="Filter by category"></select>
+      </div>
+      <ul id="channelList" class="channel-list"></ul>
+      <div id="listState" class="list-state"></div>
+    </section>
+
+    <main class="stage">
+      <div class="player" id="player">
+        <video id="video" playsinline controls></video>
+        <div id="overlay" class="overlay">
+          <div class="overlay-inner">
+            <div class="spinner" hidden></div>
+            <p class="overlay-title">Pick a channel to start watching</p>
+            <p class="overlay-sub muted">Mabuhay! Choose from Philippine or international channels on the left.</p>
+            <button class="btn" id="retryBtn" hidden>Try again</button>
+          </div>
+        </div>
+      </div>
+      <div class="now-playing">
+        <img id="npLogo" class="np-logo" alt="" hidden />
+        <div class="np-meta">
+          <h1 id="npName">Nothing playing</h1>
+          <p id="npInfo" class="muted small"></p>
+        </div>
+        <div class="np-actions">
+          <select id="qualitySelect" title="Quality" hidden></select>
+          <button id="favBtn" class="icon-btn" title="Add to favorites" aria-label="Add to favorites" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 4 4.5 7.3 4.5c2 0 3.5 1.1 4.7 2.7 1.2-1.6 2.7-2.7 4.7-2.7 3.3 0 5.7 3.1 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="prevBtn" class="icon-btn" title="Previous channel (↑)" aria-label="Previous channel">
+            <svg viewBox="0 0 24 24"><path d="M6 6v12M18 6l-9 6 9 6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="nextBtn" class="icon-btn" title="Next channel (↓)" aria-label="Next channel">
+            <svg viewBox="0 0 24 24"><path d="M18 6v12M6 6l9 6-9 6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="pipBtn" class="icon-btn" title="Picture-in-picture" aria-label="Picture-in-picture">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="11" width="7" height="6" rx="1" fill="currentColor"/></svg>
+          </button>
+          <button id="fsBtn" class="icon-btn" title="Fullscreen (F)" aria-label="Fullscreen">
+            <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="hint muted small">Shortcuts: <kbd>↑</kbd>/<kbd>↓</kbd> change channel · <kbd>F</kbd> fullscreen · <kbd>M</kbd> mute · <kbd>/</kbd> search</p>
+    </main>
+  </div>
+
+  <!-- Add playlist dialog -->
+  <dialog id="addDialog" class="dialog">
+    <form method="dialog" id="addForm">
+      <h2>Add a playlist</h2>
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="url">M3U link</button>
+        <button type="button" class="tab" data-tab="file">M3U file</button>
+        <button type="button" class="tab" data-tab="xtream">Xtream Codes</button>
+      </div>
+      <label>Name
+        <input name="name" placeholder="e.g. My IPTV provider" />
+      </label>
+      <div class="tab-panel" data-panel="url">
+        <label>Playlist URL
+          <input name="url" type="url" placeholder="https://example.com/playlist.m3u" />
+        </label>
+      </div>
+      <div class="tab-panel" data-panel="file" hidden>
+        <label>Playlist file (.m3u / .m3u8)
+          <input name="file" type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl,text/plain" />
+        </label>
+      </div>
+      <div class="tab-panel" data-panel="xtream" hidden>
+        <label>Server URL
+          <input name="xserver" type="url" placeholder="http://provider.example:8080" />
+        </label>
+        <div class="row">
+          <label>Username <input name="xuser" autocomplete="off" /></label>
+          <label>Password <input name="xpass" type="password" autocomplete="off" /></label>
+        </div>
+      </div>
+      <p id="addError" class="error small" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" value="cancel" id="addCancel">Cancel</button>
+        <button type="submit" class="btn primary" id="addSubmit">Add playlist</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Settings dialog -->
+  <dialog id="settingsDialog" class="dialog">
+    <form method="dialog">
+      <h2>Settings</h2>
+      <fieldset>
+        <legend>Stream proxy</legend>
+        <label class="radio"><input type="radio" name="proxyMode" value="auto" /> <span><b>Auto</b> — play directly, fall back to the proxy if the stream is blocked</span></label>
+        <label class="radio"><input type="radio" name="proxyMode" value="always" /> <span><b>Always</b> — send every stream through the proxy</span></label>
+        <label class="radio"><input type="radio" name="proxyMode" value="off" /> <span><b>Off</b> — play directly only</span></label>
+        <p class="muted small">The proxy is only available when the app is started with <code>npm start</code>.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Channel list</legend>
+        <label class="radio"><input type="checkbox" id="hideGeo" /> <span>Hide channels marked <i>Geo-blocked</i></span></label>
+      </fieldset>
+      <fieldset>
+        <legend>Data</legend>
+        <button type="button" class="btn danger" id="resetBtn">Clear favorites, history and my playlists</button>
+        <a class="btn" id="logoutBtn" href="/logout" hidden>Sign out</a>
+      </fieldset>
+      <div class="dialog-actions">
+        <button class="btn primary" value="close">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: tanaw-tv
+    runtime: node
+    plan: free
+    region: singapore # closest Render region to the Philippines
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: HOST
+        value: 0.0.0.0
+      - key: ACCESS_PASSWORD
+        sync: false # Render asks you for this value when you create the Blueprint
